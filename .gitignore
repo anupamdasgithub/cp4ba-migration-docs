@@ -1,0 +1,15 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*~
+.*.swp
+
+# Office lock / temp files
+~$*.docx
+~$*.pptx
+~$*.xlsx
+.~lock.*#
+
+# Local render artifacts
+*.tmp
+/render/
