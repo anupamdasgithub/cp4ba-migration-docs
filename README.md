@@ -9,6 +9,36 @@ for Business Automation (CP4BA) 26.0.0.
 | File | Description |
 |------|-------------|
 | [`cp4ba-migration.pdf`](./cp4ba-migration.pdf) | The design-review pack (colour, tables). |
+| [`images/baw26-target-architecture.png`](./images/baw26-target-architecture.png) | The BAW 26.x target design diagram (BPMN mock, BAW-faithful naming). |
+
+## Target design diagram
+
+The BAW 26.x target design for the migrated flow, authored as a BPMN mock with
+BAW-faithful naming — a **design mock for review, not a BAW artifact**, since
+BAW Process Designer does not import BPMN 2.0 XML:
+
+![CP4BA / BAW 26.x target architecture](./images/baw26-target-architecture.png)
+
+The four regions map to the three CP4BA AI capabilities plus deterministic
+control:
+
+- **A — Domain scope guardrail** — `Decision Task (ODM)`, kept deterministic
+  and auditable rather than delegated to a model.
+- **B — Handle customer request** — `Agent (watsonx.ai via MCP)`: an ad-hoc,
+  agent-driven region where the KB and memory operations are exposed as **MCP
+  tools** the agent selects at runtime. The Camunda `knowledgeBaseDecision`
+  flag is gone; empty retrieval is a normal tool result, and KB writes pass a
+  `Decision Task (ODM): Approve KB write` audit gate.
+- **C — Judge & route** — `GenAI Activity (Model Gateway → Bedrock /
+  watsonx.ai): Agent as a Judge`, feeding a deterministic gateway on the
+  structured verdict (`solved_with_confidence` / `needs_review` /
+  `needs_human_resolution`).
+- **D — Human controlled request** — event subprocess with plain BAW human
+  services; no Case Builder, since every human step here is bounded with a
+  known successor.
+
+> Diagram caveat: layout geometry is computed, not hand-designed. The naming
+> is the migration contract; the picture illustrates it.
 
 ## What's inside
 
